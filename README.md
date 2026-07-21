@@ -51,7 +51,7 @@ curl http://<IP>:<mapped-8000>/v1/chat/completions \
 |---|---|---|
 | `MODEL_ID` | `nvidia/diffusiongemma-26B-A4B-it-NVFP4` | 서빙할 HF 모델 |
 | `MAX_MODEL_LEN` | `32768` | 컨텍스트 길이. 24GB에서 256K 전체는 불가 |
-| `MAX_NUM_SEQS` | `4` | 동시 시퀀스 수 |
+| `MAX_NUM_SEQS` | `2` | 동시 시퀀스 수 |
 | `GPU_MEM_UTIL` | `0.84` | vLLM GPU 메모리 사용률 |
 | `VLLM_EXTRA_ARGS` | (없음) | vllm serve 추가 인자 |
 | `HF_TOKEN` | (없음) | gated 모델일 경우 HF 토큰 |

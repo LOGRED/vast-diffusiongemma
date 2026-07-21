@@ -18,12 +18,16 @@ if command -v nvidia-smi >/dev/null; then
     fi
 fi
 
+# Diffusion sampler warmup allocates vocab(262k) x 256-token-block x num_seqs
+# fp32 buffers outside the vLLM memory budget; keep both small on 24GB cards.
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
+
 echo "[entrypoint] starting vLLM for ${MODEL_ID} on :8000 (first boot downloads ~16.5GB weights)"
 # shellcheck disable=SC2086
 vllm serve "$MODEL_ID" \
     --host 0.0.0.0 --port 8000 \
     --trust-remote-code \
-    --max-num-seqs "${MAX_NUM_SEQS:-4}" \
+    --max-num-seqs "${MAX_NUM_SEQS:-2}" \
     --gpu-memory-utilization "${GPU_MEM_UTIL:-0.84}" \
     --max-model-len "${MAX_MODEL_LEN:-32768}" \
     --attention-backend TRITON_ATTN \
