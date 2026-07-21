@@ -6,6 +6,18 @@ export HF_HOME="${HF_HOME:-/workspace/hf_cache}"
 export DATA_DIR="${DATA_DIR:-/workspace/open-webui}"
 mkdir -p "$HF_HOME" "$DATA_DIR"
 
+# GPU sanity check: NVFP4 weights alone need ~16.5GB free
+if command -v nvidia-smi >/dev/null; then
+    nvidia-smi --query-gpu=name,memory.total,memory.used,memory.free --format=csv || true
+    FREE_MB=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1 || echo 0)
+    if [ "${FREE_MB:-0}" -lt "${MIN_FREE_VRAM_MB:-18000}" ]; then
+        echo "[entrypoint] FATAL: only ${FREE_MB}MiB VRAM free — another process on this host is holding GPU memory." >&2
+        echo "[entrypoint] This vast.ai machine is unusable for this model. Destroy the instance and rent a different machine." >&2
+        sleep 60   # avoid tight restart loop billing
+        exit 1
+    fi
+fi
+
 echo "[entrypoint] starting vLLM for ${MODEL_ID} on :8000 (first boot downloads ~16.5GB weights)"
 # shellcheck disable=SC2086
 vllm serve "$MODEL_ID" \
