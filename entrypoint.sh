@@ -24,7 +24,7 @@ vllm serve "$MODEL_ID" \
     --host 0.0.0.0 --port 8000 \
     --trust-remote-code \
     --max-num-seqs "${MAX_NUM_SEQS:-4}" \
-    --gpu-memory-utilization "${GPU_MEM_UTIL:-0.92}" \
+    --gpu-memory-utilization "${GPU_MEM_UTIL:-0.84}" \
     --max-model-len "${MAX_MODEL_LEN:-32768}" \
     --attention-backend TRITON_ATTN \
     --enable-auto-tool-choice \
